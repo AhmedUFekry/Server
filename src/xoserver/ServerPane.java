@@ -83,11 +83,12 @@ public  class ServerPane extends AnchorPane {
         getChildren().add(avusers);
         getChildren().add(numOfOnlineData);
         getChildren().add(avnum);
-        
+       /* 
         startBtn.AddActionListener(e ->(){
         Server server = new Server();
         server.StartServer(8000);
     });
+*/
 
     }
 }
