@@ -8,75 +8,81 @@ import javafx.scene.text.Text;
 
 public  class ServerPane extends AnchorPane {
 
-    protected final Text serverapp;
-    protected final Button start;
+    protected final Label label;
+    protected final Text text;
+    protected final Button startbtn;
     protected final Label onnum;
+    protected final Label avusers;
+    protected final Label onnum0;
     protected final Label avnum;
-    protected final Label online;
-    protected final Label available;
 
     public ServerPane() {
 
-        serverapp = new Text();
-        start = new Button();
+        label = new Label();
+        text = new Text();
+        startbtn = new Button();
         onnum = new Label();
+        avusers = new Label();
+        onnum0 = new Label();
         avnum = new Label();
-        online = new Label();
-        available = new Label();
 
-        setMaxHeight(USE_PREF_SIZE);
-        setMaxWidth(USE_PREF_SIZE);
-        setMinHeight(USE_PREF_SIZE);
-        setMinWidth(USE_PREF_SIZE);
-        setPrefHeight(280.0);
-        setPrefWidth(494.0);
+        setId("AnchorPane");
+        setPrefHeight(200);
+        setPrefWidth(320);
 
-        serverapp.setFontSmoothingType(javafx.scene.text.FontSmoothingType.LCD);
-        serverapp.setLayoutX(143.0);
-        serverapp.setLayoutY(42.0);
-        serverapp.setStrokeType(javafx.scene.shape.StrokeType.OUTSIDE);
-        serverapp.setStrokeWidth(0.0);
-        serverapp.setText("server application");
-        serverapp.setWrappingWidth(231.4700927734375);
-        serverapp.setFont(new Font(26.0));
+        label.setLayoutX(126);
+        label.setLayoutY(120);
+        label.setMinHeight(16);
+        label.setMinWidth(69);
 
-        start.setLayoutX(191.0);
-        start.setLayoutY(61.0);
-        start.setMnemonicParsing(false);
-        start.setPrefHeight(25.0);
-        start.setPrefWidth(105.0);
-        start.setText("start");
+        text.setLayoutX(74.0);
+        text.setLayoutY(30.0);
+        text.setStrokeType(javafx.scene.shape.StrokeType.OUTSIDE);
+        text.setStrokeWidth(0.0);
+        text.setText("Server Application");
+        text.setWrappingWidth(172.13677978515625);
+        text.setFont(new Font(21.0));
 
-        onnum.setLayoutX(33.0);
-        onnum.setLayoutY(114.0);
-        onnum.setPrefHeight(33.0);
-        onnum.setPrefWidth(152.0);
-        onnum.setText("number of online users :");
+        startbtn.setLayoutX(126.0);
+        startbtn.setLayoutY(56.0);
+        startbtn.setMnemonicParsing(false);
+        startbtn.setPrefHeight(25.0);
+        startbtn.setPrefWidth(56.0);
+        startbtn.setText("Start");
 
-        avnum.setLayoutX(33.0);
-        avnum.setLayoutY(158.0);
-        avnum.setPrefHeight(33.0);
-        avnum.setPrefWidth(152.0);
-        avnum.setText("number of available users :");
+        onnum.setLayoutX(10.0);
+        onnum.setLayoutY(100.0);
+        onnum.setPrefHeight(24.0);
+        onnum.setPrefWidth(163.0);
+        onnum.setText("online users :");
+        onnum.setFont(new Font(16.0));
 
-        online.setLayoutX(191.0);
-        online.setLayoutY(118.0);
-        online.setPrefHeight(25.0);
-        online.setPrefWidth(36.0);
-        online.setText("10");
+        avusers.setLayoutX(12.0);
+        avusers.setLayoutY(137.0);
+        avusers.setPrefHeight(25.0);
+        avusers.setPrefWidth(119.0);
+        avusers.setText("available users :");
+        avusers.setFont(new Font(16.0));
 
-        available.setLayoutX(195.0);
-        available.setLayoutY(166.0);
-        available.setPrefHeight(25.0);
-        available.setPrefWidth(36.0);
-        available.setText("5");
+        onnum0.setLayoutX(147.0);
+        onnum0.setLayoutY(104.0);
+        onnum0.setText("10");
+        onnum0.setFont(new Font(15.0));
 
-        getChildren().add(serverapp);
-        getChildren().add(start);
+        avnum.setLayoutX(143.0);
+        avnum.setLayoutY(141.0);
+        avnum.setPrefHeight(17.0);
+        avnum.setPrefWidth(35.0);
+        avnum.setText(" 5");
+        avnum.setFont(new Font(15.0));
+
+        getChildren().add(label);
+        getChildren().add(text);
+        getChildren().add(startbtn);
         getChildren().add(onnum);
+        getChildren().add(avusers);
+        getChildren().add(onnum0);
         getChildren().add(avnum);
-        getChildren().add(online);
-        getChildren().add(available);
 
     }
 }

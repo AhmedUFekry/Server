@@ -6,18 +6,34 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="280.0" prefWidth="494.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Text fx:id="serverapp" fontSmoothingType="LCD" layoutX="143.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="server application" wrappingWidth="231.4700927734375">
+<AnchorPane id="AnchorPane" fx:id="onusers" prefHeight="200" prefWidth="320" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.171" fx:controller="xoserver.FXMLDocumentController">
+    <children>
+        <Label fx:id="label" layoutX="126" layoutY="120" minHeight="16" minWidth="69" />
+      <Text layoutX="74.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Server Application" wrappingWidth="172.13677978515625">
          <font>
-            <Font size="26.0" />
+            <Font size="21.0" />
          </font>
       </Text>
-      <Button fx:id="start" layoutX="191.0" layoutY="61.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="105.0" text="start" />
-      <Label fx:id="onnum" layoutX="33.0" layoutY="114.0" prefHeight="33.0" prefWidth="152.0" text="number of online users :" />
-      <Label fx:id="avnum" layoutX="33.0" layoutY="158.0" prefHeight="33.0" prefWidth="152.0" text="number of available users :" />
-      <Label fx:id="online" layoutX="191.0" layoutY="118.0" prefHeight="25.0" prefWidth="36.0" text="10" />
-      <Label fx:id="available" layoutX="195.0" layoutY="166.0" prefHeight="25.0" prefWidth="36.0" text="5" />
-   </children>
+      <Button fx:id="startbtn" layoutX="126.0" layoutY="56.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="56.0" text="Start" />
+      <Label fx:id="onnum" layoutX="10.0" layoutY="100.0" prefHeight="24.0" prefWidth="163.0" text="online users :">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <Label fx:id="avusers" layoutX="12.0" layoutY="137.0" prefHeight="25.0" prefWidth="119.0" text="available users :">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <Label fx:id="onnum" layoutX="147.0" layoutY="104.0" text="10">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Label fx:id="avnum" layoutX="143.0" layoutY="141.0" prefHeight="17.0" prefWidth="35.0" text=" 5">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+    </children>
 </AnchorPane>
