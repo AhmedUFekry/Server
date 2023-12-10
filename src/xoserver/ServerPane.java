@@ -10,20 +10,20 @@ public  class ServerPane extends AnchorPane {
 
     protected final Label label;
     protected final Text text;
-    protected final Button startbtn;
-    protected final Label onnum;
+    protected final Button startBtn;
+    protected final Label numOfOnline;
     protected final Label avusers;
-    protected final Label onnum0;
+    protected final Label numOfOnlineData;
     protected final Label avnum;
 
     public ServerPane() {
 
         label = new Label();
         text = new Text();
-        startbtn = new Button();
-        onnum = new Label();
+        startBtn = new Button();
+        numOfOnline = new Label();
         avusers = new Label();
-        onnum0 = new Label();
+        numOfOnlineData = new Label();
         avnum = new Label();
 
         setId("AnchorPane");
@@ -43,19 +43,19 @@ public  class ServerPane extends AnchorPane {
         text.setWrappingWidth(172.13677978515625);
         text.setFont(new Font(21.0));
 
-        startbtn.setLayoutX(126.0);
-        startbtn.setLayoutY(56.0);
-        startbtn.setMnemonicParsing(false);
-        startbtn.setPrefHeight(25.0);
-        startbtn.setPrefWidth(56.0);
-        startbtn.setText("Start");
+        startBtn.setLayoutX(126.0);
+        startBtn.setLayoutY(56.0);
+        startBtn.setMnemonicParsing(false);
+        startBtn.setPrefHeight(25.0);
+        startBtn.setPrefWidth(56.0);
+        startBtn.setText("Start");
 
-        onnum.setLayoutX(10.0);
-        onnum.setLayoutY(100.0);
-        onnum.setPrefHeight(24.0);
-        onnum.setPrefWidth(163.0);
-        onnum.setText("online users :");
-        onnum.setFont(new Font(16.0));
+        numOfOnline.setLayoutX(10.0);
+        numOfOnline.setLayoutY(100.0);
+        numOfOnline.setPrefHeight(24.0);
+        numOfOnline.setPrefWidth(163.0);
+        numOfOnline.setText("online users :");
+        numOfOnline.setFont(new Font(16.0));
 
         avusers.setLayoutX(12.0);
         avusers.setLayoutY(137.0);
@@ -64,10 +64,10 @@ public  class ServerPane extends AnchorPane {
         avusers.setText("available users :");
         avusers.setFont(new Font(16.0));
 
-        onnum0.setLayoutX(147.0);
-        onnum0.setLayoutY(104.0);
-        onnum0.setText("10");
-        onnum0.setFont(new Font(15.0));
+        numOfOnlineData.setLayoutX(147.0);
+        numOfOnlineData.setLayoutY(104.0);
+        numOfOnlineData.setText("10");
+        numOfOnlineData.setFont(new Font(15.0));
 
         avnum.setLayoutX(143.0);
         avnum.setLayoutY(141.0);
@@ -78,11 +78,16 @@ public  class ServerPane extends AnchorPane {
 
         getChildren().add(label);
         getChildren().add(text);
-        getChildren().add(startbtn);
-        getChildren().add(onnum);
+        getChildren().add(startBtn);
+        getChildren().add(numOfOnline);
         getChildren().add(avusers);
-        getChildren().add(onnum0);
+        getChildren().add(numOfOnlineData);
         getChildren().add(avnum);
+        
+        startBtn.AddActionListener(e ->(){
+        Server server = new Server();
+        server.StartServer(8000);
+    });
 
     }
 }
