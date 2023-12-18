@@ -1,5 +1,10 @@
 package xoserver;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
@@ -15,6 +20,11 @@ public  class ServerPane extends AnchorPane {
     protected final Label avusers;
     protected final Label onnum0;
     protected final Label avnum;
+    
+        ServerSocket myServerSocket;
+        Socket s;
+        DataInputStream dis ;
+        PrintStream ps;
 
     public ServerPane() {
 
@@ -25,6 +35,39 @@ public  class ServerPane extends AnchorPane {
         avusers = new Label();
         onnum0 = new Label();
         avnum = new Label();
+        //SERVERLOGIC***************
+            try
+            {
+                myServerSocket = new ServerSocket(5050);
+                s = myServerSocket.accept();
+                dis = new DataInputStream(s.getInputStream ());
+                ps = new PrintStream(s.getOutputStream ());
+                String msg = dis.readLine();
+                System.out.println(msg);
+                System.out.println("server starts");                
+                ps.println("Data Received");
+            }
+            catch(IOException ex)
+            {
+                ex.printStackTrace();
+            }
+            finally
+            {
+                try
+                {
+                    ps.close();
+                    dis.close();
+                    s.close();
+                    myServerSocket.close();
+                    System.out.println("server closed");
+                }
+                catch(Exception ex)
+                {
+                    ex.printStackTrace();
+                } 
+            }
+        
+        //**************************
 
         setId("AnchorPane");
         setPrefHeight(200);
