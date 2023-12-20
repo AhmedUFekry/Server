@@ -21,11 +21,7 @@ public  class ServerPane extends AnchorPane {
     protected final Label numOfOnlineData;
     protected final Label avnum;
     
-        ServerSocket myServerSocket;
-        Socket s;
-        DataInputStream dis ;
-        PrintStream ps;
-
+    
     public ServerPane() {
 
         label = new Label();
@@ -36,36 +32,7 @@ public  class ServerPane extends AnchorPane {
         numOfOnlineData = new Label();
         avnum = new Label();
         //SERVERLOGIC***************
-            try
-            {
-                myServerSocket = new ServerSocket(5050);
-                s = myServerSocket.accept();
-                dis = new DataInputStream(s.getInputStream ());
-                ps = new PrintStream(s.getOutputStream ());
-                String msg = dis.readLine();
-                System.out.println(msg);
-                System.out.println("server starts");                
-                ps.println("Data Received");
-            }
-            catch(IOException ex)
-            {
-                ex.printStackTrace();
-            }
-            finally
-            {
-                try
-                {
-                    ps.close();
-                    dis.close();
-                    s.close();
-                    myServerSocket.close();
-                    System.out.println("server closed");
-                }
-                catch(Exception ex)
-                {
-                    ex.printStackTrace();
-                } 
-            }
+           
         
         //**************************
 
