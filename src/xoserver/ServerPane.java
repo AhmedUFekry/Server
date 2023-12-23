@@ -1,5 +1,6 @@
 package xoserver;
 
+import com.google.gson.Gson;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -10,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import xoserver.dto.DTOPlayerData;
 
 public  class ServerPane extends AnchorPane {
 
@@ -25,6 +27,7 @@ public  class ServerPane extends AnchorPane {
         Socket s;
         DataInputStream dis ;
         PrintStream ps;
+        
 
     public ServerPane() {
 
@@ -46,6 +49,9 @@ public  class ServerPane extends AnchorPane {
                 System.out.println(msg);
                 System.out.println("server starts");                
                 ps.println("Data Received");
+                 Gson gson = new Gson();
+                DTOPlayerData player = gson.fromJson(msg, DTOPlayerData.class);
+               
             }
             catch(IOException ex)
             {
