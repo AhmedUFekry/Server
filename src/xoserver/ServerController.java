@@ -47,6 +47,7 @@ public class ServerController implements Initializable {
 
     @FXML
     private void handleStartBtnAction(ActionEvent event) {
+        new ServerHandler();
     }
     
 }

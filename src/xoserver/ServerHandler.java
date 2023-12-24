@@ -5,6 +5,9 @@
  */
 package xoserver;
 
+import Database.DataAccessLayer;
+import Model.DataOperation;
+import com.google.gson.Gson;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -18,86 +21,108 @@ import java.util.logging.Logger;
  *
  * @author Geforce
  */
-public class ServerHandler extends Thread  {
+public class ServerHandler{
        
-       private ServerSocket myServerSocket;
-      
-       
-       public ServerHandler() {
-           try {
-               
-               myServerSocket = new ServerSocket(5050);
-              
-       
-           } catch (IOException ex) {
-               Logger.getLogger(ServerHandler.class.getName()).log(Level.SEVERE, null, ex);
-           } 
-           while(true){
-               try {
-                   Socket s;
-                   s = myServerSocket.accept();
-                   new ClientHandler(s);
-               } catch (IOException ex) {
-                   Logger.getLogger(ServerHandler.class.getName()).log(Level.SEVERE, null, ex);
-               }
-           
-           }
-        
-    }
-  
-    
-    
+    private ServerSocket myServerSocket; 
+    public ServerHandler() {
+        try {
+
+            myServerSocket = new ServerSocket(5050);
+            System.out.println("xoserver.ServerHandler.<init>()");
+
+        } catch (IOException ex) {
+            Logger.getLogger(ServerHandler.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+         // Accept client connections in a separate thread
+         new Thread(() -> {
+             while (true) {
+                 try {
+                     Socket clientSocket = myServerSocket.accept();
+                     new ClientHandler(clientSocket);
+                 } catch (IOException ex) {
+                     Logger.getLogger(ServerHandler.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+             }
+         }).start();
+     } 
 }
 
 class ClientHandler extends Thread {
-     private  Socket s;
-     private  DataInputStream dis ;
-     private PrintStream ps;
+     private  Socket socket;
+     private  DataInputStream dataInput ;
+     private PrintStream dataOutput;
      private static Vector<ClientHandler> clientsVector ; 
-    public ClientHandler(Socket s) {
-         
+    public ClientHandler(Socket s) { 
         try {
-            dis = new DataInputStream(s.getInputStream ());
-            ps = new PrintStream(s.getOutputStream ());
+            dataInput = new DataInputStream(s.getInputStream ());
+            dataOutput = new PrintStream(s.getOutputStream ());
             clientsVector = new Vector<ClientHandler>();
-            String msg = dis.readLine();
-            System.out.println(msg);
+            System.out.println("xoserver.ClientHandler.<init>()");
+         //   String msg = dataInput.readLine();
+          //  System.out.println(msg);
             ClientHandler.clientsVector.add(this);
-            ps.println("Data Received");
+         //   dataOutput.println("Data Received");
             start();
         } catch (IOException ex) {
             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }finally
-            {
-                try
-                {
-                    ps.close();
-                    dis.close();
-                    s.close();
-                    System.out.println("server closed");
-                }
-                catch(Exception ex)
-                {
-                    ex.printStackTrace();
-                } 
-            }
+        }
     }
     
      @Override
     public void run(){
-    while(true){
         try {
-            String str ;
-            str = dis.readLine();
-        } catch (IOException ex) {
-            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+            String msg ;
+            //handling talk to the client
+           // msg = dataInput.readLine();
+           while((msg = dataInput.readLine()) != null){
+               System.out.println(msg);
+               // System.out.println("enterd");
+           // if(msg != null){
+                // check connection to the server at start screen
+                if(msg.equals("start")){
+                    dataOutput.println("connected successfully"); 
+                }else{
+                    handleClientOperation(msg);
+                }
+            } 
+       }catch (IOException ex) {
+                Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }finally{
+               try
+               {
+                  if (socket != null && !socket.isClosed()) {
+                       socket.close();
+                       System.out.println("server closed");
+                   }
+                   dataOutput.close();
+                   dataInput.close();
+                   
+               }
+               catch(Exception ex)
+               {
+                   ex.printStackTrace();
+               } 
+           }
+    }
+     private void handleClientOperation(String msg) {
+        DataOperation dataReceived = new Gson().fromJson(msg, DataOperation.class);
+        if (dataReceived != null) {
+            if (dataReceived.getOperation().equals("login")) {
+                String responseToClient = DataAccessLayer.signInCheck(dataReceived.getPlayers().get(0).getUserName(), dataReceived.getPlayers().get(0).getPassword());
+                System.out.println(dataReceived.getPlayers().get(0).getPassword());
+                System.out.println(responseToClient);
+                dataOutput.println(responseToClient);
+            } else if (dataReceived.getOperation().equals("signup")) {
+                // Handle signup operation
+                
+            }
+            // Add more operations here
+        }else{
+             System.out.println("Received null data from client");
         }
-    
     }
-    
-    }
- 
-     void forwardRequest(){
+     
+    void forwardRequest(){
      
      }
    
