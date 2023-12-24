@@ -19,10 +19,8 @@ public class XOServer extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = new ServerPane();
-        
+        Parent root = FXMLLoader.load(getClass().getResource("ServerUI.fxml"));
         Scene scene = new Scene(root);
-        
         stage.setScene(scene);
         stage.show();
     }
