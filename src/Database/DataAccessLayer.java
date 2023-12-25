@@ -54,6 +54,40 @@ public class DataAccessLayer {
         return "error";
     }
     
+   
+    public static String signUpCheck( DTOPlayerData player) {
+      // DTOPlayerData player = new DTOPlayerData();
+            int result;
+            
+            try {
+            DriverManager.registerDriver(new ClientDriver()); //when error occour throw it and close
+              Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/xodatabase", "root", "root");
+            PreparedStatement stmt= con.prepareStatement ( "INSERT INTO PLAYER (USERNAME,FULLNAME,EMAIL,PASSWORD,ONLINESTATUS,AVAILABILITYSTATUS,GENDER) VALUES (?,?,?,?,?,?,?)");
+            stmt.setString(1,player.getUserName());
+            stmt.setString(2,player.getFullName());
+            stmt.setString(3,player.getEmail());
+            stmt.setString(4,player.getPassword());
+             stmt.setBoolean(5,player.isIsOnline());
+              stmt.setBoolean(6,player.isIsAvailable());
+            stmt.setBoolean(7,player.isIsMale());
+           
+                result  =stmt.executeUpdate();
+              stmt.close();
+              con.close();
+                  System.out.println(result);
+            if(result>0)
+            {
+                return player.getUserName();
+            
+            }
+         
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAccessLayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "error";
+    }
+    
+   
     public static int updateStatus(String userName,Boolean status) throws SQLException{
         int result;
        //1- load & Register the driver
