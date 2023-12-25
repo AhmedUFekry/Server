@@ -112,8 +112,13 @@ class ClientHandler extends Thread {
                 System.out.println(dataReceived.getPlayers().get(0).getPassword());
                 System.out.println(responseToClient);
                 dataOutput.println(responseToClient);
-            } else if (dataReceived.getOperation().equals("signup")) {
+            } else if (dataReceived.getOperation().equals("sign up")) {
                 // Handle signup operation
+                 System.out.println(dataReceived.getPlayers());
+                String responseToClient = DataAccessLayer.signUpCheck(dataReceived.getPlayers().get(0));
+                
+               
+                dataOutput.println(responseToClient);
                 
             }
             // Add more operations here
