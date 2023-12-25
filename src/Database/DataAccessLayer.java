@@ -44,10 +44,13 @@ public class DataAccessLayer {
                   player.setIsMale(rs.getBoolean("gender"));
                   return rs.getString("username");
               }
-           
+           stmt.close();
+            con.close();
         } catch (SQLException ex) {
             Logger.getLogger(DataAccessLayer.class.getName()).log(Level.SEVERE, null, ex);
         }
+            
+            
         return "error";
     }
     
@@ -62,11 +65,14 @@ public class DataAccessLayer {
         stmt.setBoolean(1, status);
         stmt.setString(2, userName);
         result = stmt.executeUpdate();
+        
         if(result>0){
             System.out.println("Online status updated successfully.");
         } else {
             System.out.println("No rows updated. Username not found.");
         }
+        stmt.close();
+        con.close();
         return result;
     }
 }

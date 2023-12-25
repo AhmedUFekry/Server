@@ -34,7 +34,7 @@ public class ServerHandler{
             Logger.getLogger(ServerHandler.class.getName()).log(Level.SEVERE, null, ex);
         } 
          // Accept client connections in a separate thread
-         new Thread(() -> {
+        Thread serverThread = new Thread(() -> {
              while (true) {
                  try {
                      Socket clientSocket = myServerSocket.accept();
@@ -43,7 +43,9 @@ public class ServerHandler{
                      Logger.getLogger(ServerHandler.class.getName()).log(Level.SEVERE, null, ex);
                  }
              }
-         }).start();
+         });
+        serverThread.setDaemon(true);
+        serverThread.start();
      } 
 }
 
