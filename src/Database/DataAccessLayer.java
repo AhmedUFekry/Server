@@ -61,7 +61,7 @@ public class DataAccessLayer {
             
             try {
             DriverManager.registerDriver(new ClientDriver()); //when error occour throw it and close
-              Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/xodatabase", "root", "root");
+            Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/xodatabase", "root", "root");
             PreparedStatement stmt= con.prepareStatement ( "INSERT INTO PLAYER (USERNAME,FULLNAME,EMAIL,PASSWORD,ONLINESTATUS,AVAILABILITYSTATUS,GENDER) VALUES (?,?,?,?,?,?,?)");
             stmt.setString(1,player.getUserName());
             stmt.setString(2,player.getFullName());
@@ -71,16 +71,14 @@ public class DataAccessLayer {
               stmt.setBoolean(6,player.isIsAvailable());
             stmt.setBoolean(7,player.isIsMale());
            
-                result  =stmt.executeUpdate();
-              stmt.close();
-              con.close();
-                  System.out.println(result);
+            result  =stmt.executeUpdate();
+            stmt.close();
+            con.close();
+            System.out.println(result);
             if(result>0)
             {
                 return player.getUserName();
-            
             }
-         
         } catch (SQLException ex) {
             Logger.getLogger(DataAccessLayer.class.getName()).log(Level.SEVERE, null, ex);
         }
