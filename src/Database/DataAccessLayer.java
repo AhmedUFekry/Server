@@ -11,6 +11,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.derby.jdbc.ClientDriver;
@@ -107,4 +109,37 @@ public class DataAccessLayer {
         con.close();
         return result;
     }
+    
+    public static List<DTOPlayerData> availableList() {
+    List<DTOPlayerData> players = new ArrayList<>();
+
+    try {
+        DriverManager.registerDriver(new ClientDriver());
+        try (Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/XODATABASE", "root", "root");
+             PreparedStatement stmt = con.prepareStatement("select * from PLAYER where isOnline = true and isAvailable = true")) {
+
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    DTOPlayerData player = new DTOPlayerData();
+                    player.setFullName(rs.getString("fullname"));
+                    player.setUserName(rs.getString("username"));
+                    player.setEmail(rs.getString("email"));
+                    player.setPassword(rs.getString("password"));
+                    player.setWinMatch(rs.getInt("win"));
+                    player.setLoseMAtch(rs.getInt("lose"));
+                    player.setTotalMatch(rs.getInt("totalmatches"));
+                    player.setIsOnline(rs.getBoolean("ONLINESTATUS"));
+                    player.setIsAvailable(rs.getBoolean("availabilitystatus"));
+                    player.setIsMale(rs.getBoolean("gender"));
+                    players.add(player);
+                }
+            }
+        }
+    } catch (SQLException ex) {
+        //handle sql exception
+    }
+
+    return players;
+}
 }
