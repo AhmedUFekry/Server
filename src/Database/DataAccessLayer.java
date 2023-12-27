@@ -37,8 +37,8 @@ public class DataAccessLayer {
                   player.setEmail(rs.getString("email"));
                   player.setPassword(rs.getString("password"));
                   player.setWinMatch(rs.getInt("win"));
-                  player.setWinMatch(rs.getInt("lose"));
-                  player.setWinMatch(rs.getInt("totalmatches"));
+                  player.setLoseMAtch(rs.getInt("lose"));
+                  player.setTotalMatch(rs.getInt("totalmatches"));
                   player.setIsOnline(rs.getBoolean("ONLINESTATUS"));
                   player.setIsAvailable(rs.getBoolean("availabilitystatus"));
                   player.setIsMale(rs.getBoolean("gender"));
@@ -86,6 +86,47 @@ public class DataAccessLayer {
         }
         return "error";
     }
+     public static   DTOPlayerData profileCheck(String userName) {
+       DTOPlayerData player = new DTOPlayerData();
+            String pw; 
+            try {
+            DriverManager.registerDriver(new ClientDriver()); //when error occour throw it and close
+            Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/xodatabase", "root", "root");
+            PreparedStatement stmt = con.prepareStatement("select * from PLAYER where username = ? ");
+            stmt.setString(1, userName);
+           // stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                 // int updatedResult = updateStatus(userName,true);
+                  System.out.println("Database.DataAccessLayer.profileCheck()");
+                  player.setFullName(rs.getString("fullname"));
+                  player.setUserName(rs.getString("username"));
+                  player.setEmail(rs.getString("email"));
+                  player.setPassword(rs.getString("password"));
+                  player.setTotalMatch(rs.getInt("totalmatches"));
+                  player.setWinMatch(rs.getInt("win"));
+                  player.setLoseMAtch(rs.getInt("lose"));
+                  player.setIsOnline(rs.getBoolean("ONLINESTATUS"));
+                  player.setIsAvailable(rs.getBoolean("availabilitystatus"));
+                  player.setIsMale(rs.getBoolean("gender"));
+                  
+                  System.out.println("Dreturn "+ player.getFullName());
+                  return player;
+              }
+           stmt.close();
+            con.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DataAccessLayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
+       System.out.println("Dreturn null");
+  
+        return null;
+    }
+    
+    
+    
+    
     
    
     public static int updateStatus(String userName,Boolean status) throws SQLException{

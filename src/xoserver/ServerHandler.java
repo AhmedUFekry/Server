@@ -6,13 +6,16 @@
 package xoserver;
 
 import Database.DataAccessLayer;
+import Model.DTO.DTOPlayerData;
 import Model.DataOperation;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -118,11 +121,30 @@ class ClientHandler extends Thread {
                 // Handle signup operation
                  System.out.println(dataReceived.getPlayers());
                 String responseToClient = DataAccessLayer.signUpCheck(dataReceived.getPlayers().get(0));
-                
-               
                 dataOutput.println(responseToClient);
-                
             }
+           else if (dataReceived.getOperation().equals("profile")) {
+    
+    // Retrieve player data from the database using DataAccessLayer
+    // Populate the 'player' object with the retrieved data
+System.out.println("Profile()");
+       // DataOperation operation = new DataOperation("profile");
+      // operation.addPlayer(player);
+            DTOPlayerData player = DataAccessLayer.profileCheck(dataReceived.getPlayers().get(0).getUserName());
+            System.out.println(player.getEmail());
+            if(player==null){
+                System.out.println("error");
+                dataOutput.println("error");
+            }else {
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.create();
+            String jsonResponse = gson.toJson(player);
+                System.out.println("hii player"+jsonResponse);
+        // Send the JSON response to the client
+        dataOutput.println(jsonResponse);
+                        }
+}
+
             // Add more operations here
         }else{
              System.out.println("Received null data from client");
