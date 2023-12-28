@@ -116,8 +116,8 @@ public class DataAccessLayer {
     try {
         DriverManager.registerDriver(new ClientDriver());
         try (Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/XODATABASE", "root", "root");
-             PreparedStatement stmt = con.prepareStatement("select * from PLAYER where isOnline = true and isAvailable = true")) {
-
+             PreparedStatement stmt = con.prepareStatement("select * from PLAYER where ONLINESTATUS = true")) {
+                //and isAvailable = true
             
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -132,12 +132,14 @@ public class DataAccessLayer {
                     player.setIsOnline(rs.getBoolean("ONLINESTATUS"));
                     player.setIsAvailable(rs.getBoolean("availabilitystatus"));
                     player.setIsMale(rs.getBoolean("gender"));
+                    System.out.println("انا جوه الداتابيز");
                     players.add(player);
                 }
             }
         }
     } catch (SQLException ex) {
         //handle sql exception
+        ex.printStackTrace();
     }
 
     return players;

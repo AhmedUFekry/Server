@@ -9,11 +9,13 @@ import Database.DataAccessLayer;
 import Model.DTO.DTOPlayerData;
 import Model.DataOperation;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -118,9 +120,22 @@ class ClientHandler extends Thread {
                     dataOutput.println("client exit");
                     System.out.println("client exit");
                     removeClientFromVector(this);
-                } else {
+                }else if (msg.equals("availableUsers")) {
+                    DTOPlayerData player = new DTOPlayerData("aya", "aya", "email", "1234", 0, 0, 0, true, true, true);
+                    DTOPlayerData player2 = new DTOPlayerData("rwan2", "aya", "", "", 1, 0, 2, true, true, true);
+                    List<DTOPlayerData> responseToClient =  DataAccessLayer.availableList();          //new ArrayList<>();  /// transfre this to string  xxxxxxxxxxxxxxxxxxxxxxxxxxxx    حولها في json و ابعته
+                    //responseToClient.add(player);
+                    //responseToClient.add(player2);
+                    //System.out.println(responseToClient.get(2));
+                    GsonBuilder builder = new GsonBuilder();
+                    Gson gson = builder.create();
+                    String json = gson.toJson(responseToClient);
+                    System.out.println(json);
+                    dataOutput.println(json);
+
+                }else {
                     handleClientOperation(msg);
-                }
+                } 
             }
         } catch (IOException ex) {
             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -146,16 +161,8 @@ class ClientHandler extends Thread {
                 dataOutput.println(responseToClient);
                 /* if(!"error".equalsIgnoreCase(responseToClient))
                     ServerHandler.onlineUser.add(this);*/
-            } else if (dataReceived != null) {
-                if (dataReceived.getOperation().equals("availableUsers")) {
-                    List<DTOPlayerData> responseToClient = DataAccessLayer.availableList();   /// transfre this to string  xxxxxxxxxxxxxxxxxxxxxxxxxxxx    حولها في json و ابعته
-                    
-                    System.out.println(responseToClient.get(2));
-                    //dataOutput.println(json);
-
-                }
-                // Add more operations here
-            } else {
+            }// Add more operations here
+             else {
                 System.out.println("Received null data from client");
             }
         }
