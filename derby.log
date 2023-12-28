@@ -1,7 +1,7 @@
-Mon Dec 11 20:07:15 EET 2023 : Apache Derby Network Server - 10.10.2.0 - (1582446) started and ready to accept connections on port 1527
+Thu Dec 28 17:00:42 EET 2023 : Apache Derby Network Server - 10.10.2.0 - (1582446) started and ready to accept connections on port 1527
 ----------------------------------------------------------------
-Mon Dec 11 20:07:15 EET 2023:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.10.2.0 - (1582446): instance a816c00e-018c-5a0f-cfe2-ffffa83375c9 
+Thu Dec 28 17:00:45 EET 2023:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.10.2.0 - (1582446): instance a816c00e-018c-b0f1-2182-ffffa83375c9 
 on database directory D:\ITI Native 9 month\Java\Laps\JavaProject\Server\Server\XODATABASE with class loader sun.misc.Launcher$AppClassLoader@144bcfa 
 Loaded from file:/C:/Program%20Files%20(x86)/glassfish-4.1.1/javadb/lib/derby.jar
 java.vendor=Oracle Corporation
@@ -12,5 +12,3 @@ os.arch=x86
 os.version=10.0
 derby.system.home=D:\ITI Native 9 month\Java\Laps\JavaProject\Server\Server
 Database Class Loader started - derby.database.classpath=''
-----------------------------------------------------------------
-Mon Dec 11 22:09:27 EET 2023: Shutting down Derby engine

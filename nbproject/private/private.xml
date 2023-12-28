@@ -2,8 +2,12 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+<<<<<<< HEAD
+        <group/>
+=======
         <group>
             <file>file:/D:/ITI/ITI/Developing%20Applications%20using%20Java%20SE/Java%20Project/Server/src/xoserver/ServerHandler.java</file>
         </group>
+>>>>>>> 0bfdebc093cd652dd9f14b802c91d4d8cc0d3218
     </open-files>
 </project-private>

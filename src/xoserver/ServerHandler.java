@@ -30,44 +30,46 @@ import javafx.collections.ObservableList;
  *
  * @author Geforce
  */
-public class ServerHandler{
-       
-    private ServerSocket myServerSocket; 
+public class ServerHandler {
+
+    private ServerSocket myServerSocket;
     private volatile boolean isServerRunning = true;
-    public static Vector<ClientHandler> clientsVector ; 
-    public static Vector<ClientHandler> onlineUser  ; 
+    public static Vector<ClientHandler> clientsVector;
+    public static Vector<ClientHandler> onlineUser;
+
     public ServerHandler() {
         try {
 
             myServerSocket = new ServerSocket(5050);
             System.out.println("xoserver.ServerHandler.<init>()");
             clientsVector = new Vector<ClientHandler>();
-            Vector<ClientHandler> onlineUser =  new Vector<ClientHandler>();
+            Vector<ClientHandler> onlineUser = new Vector<ClientHandler>();
         } catch (IOException ex) {
             Logger.getLogger(ServerHandler.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-         // Accept client connections in a separate thread
+        }
+        // Accept client connections in a separate thread
         Thread serverThread = new Thread(() -> {
-             while (isServerRunning) {
-                 try {
-                     Socket clientSocket = myServerSocket.accept();
-                     ClientHandler clientHandler = new ClientHandler(clientSocket);
-                   //  clientsVector.add(clientHandler);
-                     System.out.println("clientsVector "+ clientsVector.size());
-                 } catch (IOException ex) {
-                     if(!isServerRunning){
-                         break;
-                     }
-                     ex.printStackTrace();
-                 }
-             }
-         });
+            while (isServerRunning) {
+                try {
+                    Socket clientSocket = myServerSocket.accept();
+                    ClientHandler clientHandler = new ClientHandler(clientSocket);
+                    //  clientsVector.add(clientHandler);
+                    System.out.println("clientsVector " + clientsVector.size());
+                } catch (IOException ex) {
+                    if (!isServerRunning) {
+                        break;
+                    }
+                    ex.printStackTrace();
+                }
+            }
+        });
         serverThread.setDaemon(true);
         serverThread.start();
-     } 
+    }
+
     public void stopServer() {
         isServerRunning = false; // Signal the server thread to stop
-        for(ClientHandler client : clientsVector ){
+        for (ClientHandler client : clientsVector) {
             System.out.println("notify client in vector");
             client.notifyServerClosed();
         }
@@ -88,42 +90,58 @@ public class ServerHandler{
 }
 
 class ClientHandler extends Thread {
+
+
      private  Socket socket;
      private  DataInputStream dataInput ;
      private PrintStream dataOutput;
      private String clientName;
      private ObservableList<DTOPlayerData> availablePlayer = FXCollections.observableArrayList(new DTOPlayerData("aya", "aya", "", "", 1, 0, 2, true, true, true),new DTOPlayerData("rwan2", "aya", "", "", 1, 0, 2, true, true, true)) ;
+  
     public ClientHandler(Socket s) { 
         try {
             socket = s;
-            dataInput = new DataInputStream(s.getInputStream ());
-            dataOutput = new PrintStream(s.getOutputStream ());
-          //  clientsVector = new Vector<ClientHandler>();
+            dataInput = new DataInputStream(s.getInputStream());
+            dataOutput = new PrintStream(s.getOutputStream());
+            //  clientsVector = new Vector<ClientHandler>();
             System.out.println("xoserver.ClientHandler.<init>()");
-           // ClientHandler.clientsVector.add(this);
-           // System.out.println("clientsVector "+ clientsVector.size());
+            // ClientHandler.clientsVector.add(this);
+            // System.out.println("clientsVector "+ clientsVector.size());
             start();
         } catch (IOException ex) {
             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-     @Override
-    public void run(){
+
+    @Override
+    public void run() {
         try {
-            String msg ;
-           while((msg = dataInput.readLine()) != null){
-               System.out.println(msg);
+            String msg;
+            while ((msg = dataInput.readLine()) != null) {
+                System.out.println(msg);
                 // check connection to the server at start screen
-                if(msg.equals("start")){
-                    dataOutput.println("connected successfully"); 
+                if (msg.equals("start")) {
+                    dataOutput.println("connected successfully");
                     addClientToVector(this);
-                }else if(msg.equalsIgnoreCase("exit")){
-                    dataOutput.println("client exit"); 
+                } else if (msg.equalsIgnoreCase("exit")) {
+                    dataOutput.println("client exit");
                     System.out.println("client exit");
                     removeClientFromVector(this);
-                }
-                /*else if(msg.equalsIgnoreCase("accepted")){
+
+                }else if (msg.equals("availableUsers")) {
+                    DTOPlayerData player = new DTOPlayerData("aya", "aya", "email", "1234", 0, 0, 0, true, true, true);
+                    DTOPlayerData player2 = new DTOPlayerData("rwan2", "aya", "", "", 1, 0, 2, true, true, true);
+                    List<DTOPlayerData> responseToClient =  DataAccessLayer.availableList();          //new ArrayList<>();  /// transfre this to string  xxxxxxxxxxxxxxxxxxxxxxxxxxxx    حولها في json و ابعته
+                    //responseToClient.add(player);
+                    //responseToClient.add(player2);
+                    //System.out.println(responseToClient.get(2));
+                    GsonBuilder builder = new GsonBuilder();
+                    Gson gson = builder.create();
+                    String json = gson.toJson(responseToClient);
+                    System.out.println(json);
+                    dataOutput.println(json);
+
+                }/*else if(msg.equalsIgnoreCase("accepted")){
                     System.out.println("start the game");
                     dataOutput.println("start the game");
                 }else if(msg.equalsIgnoreCase("rejected")){
@@ -132,16 +150,16 @@ class ClientHandler extends Thread {
                 else{
                     System.out.println("handleClientOperation "+msg);
                     handleClientOperation(msg);
-                }
-            } 
-       }catch (IOException ex) {
-                Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
-            }finally{
-               closeResources();
-           }
+                } 
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            closeResources();
+        }
     }
-    
-     private void handleClientOperation(String msg) {
+
+    private void handleClientOperation(String msg) {
         DataOperation dataReceived = new Gson().fromJson(msg, DataOperation.class);
         if (dataReceived != null) {
             if (dataReceived.getOperation().equals("login")) {
@@ -149,17 +167,23 @@ class ClientHandler extends Thread {
                 System.out.println(dataReceived.getPlayers().get(0).getPassword());
                 System.out.println(responseToClient);
                 dataOutput.println(responseToClient);
+
+                /*  if(!"error".equalsIgnoreCase(responseToClient))
+                    ServerHandler.onlineUser.add(this);*/
               
-                if(!"error".equalsIgnoreCase(responseToClient))
+                if(!"error".equalsIgnoreCase(responseToClient)){
                     System.out.println("add client name to the socket "+responseToClient);
                     this.setClientName(responseToClient.trim());
-                  
+                }
             } else if (dataReceived.getOperation().equals("sign up")) {
                 // Handle signup operation
                 System.out.println(dataReceived.getPlayers());
                 String responseToClient = DataAccessLayer.signUpCheck(dataReceived.getPlayers().get(0));
                 dataOutput.println(responseToClient);
-            }
+                /* if(!"error".equalsIgnoreCase(responseToClient))
+                    ServerHandler.onlineUser.add(this);*/
+            }// Add more operations here
+             
       else if (dataReceived.getOperation().equals("profile")) {
             // Retrieve player data from the database using DataAccessLayer
             // Populate the 'player' object with the retrieved data
@@ -194,29 +218,40 @@ class ClientHandler extends Thread {
              System.out.println("Received null data from client");
         }
     }
+
     public void closeResources() {
         try {
-            if (dataOutput != null) dataOutput.close();
-            if (dataInput != null) dataInput.close();
-            if (socket != null && !socket.isClosed()) socket.close();
+            if (dataOutput != null) {
+                dataOutput.close();
+            }
+            if (dataInput != null) {
+                dataInput.close();
+            }
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
-    void forwardRequest(){
-     
-     }
-   public void notifyServerClosed(){
-       dataOutput.println("Server is closing");
-       System.out.println("notify client to close the server");
-   }
-   private void removeClientFromVector(ClientHandler clientHandler) {
+
+    void forwardRequest() {
+
+    }
+
+    public void notifyServerClosed() {
+        dataOutput.println("Server is closing");
+        System.out.println("notify client to close the server");
+    }
+
+    private void removeClientFromVector(ClientHandler clientHandler) {
         if (ServerHandler.clientsVector != null) {
             ServerHandler.clientsVector.remove(clientHandler);
             System.out.println("Client removed from clientsVector");
-            System.out.println("removeClientFromVector() "+ ServerHandler.clientsVector.size()); 
+            System.out.println("removeClientFromVector() " + ServerHandler.clientsVector.size());
         }
     }
+
     private void addClientToVector(ClientHandler clientHandler) {
         ServerHandler.clientsVector.add(clientHandler);
         System.out.println("Client added to clientsVector");
@@ -260,5 +295,9 @@ class ClientHandler extends Thread {
     }
     public String getClientName(){
         return clientName;
+
     }
+
 }
+
+
