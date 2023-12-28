@@ -45,10 +45,9 @@ public class DataAccessLayer {
     }
     
    
-    public static String signUpCheck( DTOPlayerData player) {
+    public static String signUpCheck(DTOPlayerData player) {
       // DTOPlayerData player = new DTOPlayerData();
             int result;
-            
             try {
             DriverManager.registerDriver(new ClientDriver()); //when error occour throw it and close
             Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/xodatabase", "root", "root");
