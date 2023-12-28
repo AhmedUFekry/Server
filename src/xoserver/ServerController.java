@@ -5,6 +5,7 @@
  */
 package xoserver;
 
+import Database.DataAccessLayer;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.beans.binding.Bindings;
@@ -40,9 +41,9 @@ public class ServerController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         ObservableList<PieChart.Data> allPlayerChart = FXCollections.observableArrayList(
-                            new PieChart.Data("Online", 10),
-                            new PieChart.Data("Offline", 12),
-                            new PieChart.Data("In Game", 4));
+                            new PieChart.Data("Online", DataAccessLayer.onlineUsers().size()),
+                            new PieChart.Data("Offline", DataAccessLayer.offlineUsers().size()),
+                            new PieChart.Data("In Game", DataAccessLayer.inGameUsers().size()));
         allPlayerChart.forEach(data -> data.nameProperty().bind(Bindings.concat(data.getName()," user: ", data.pieValueProperty())));
         pieChart.getData().addAll(allPlayerChart);
     }    

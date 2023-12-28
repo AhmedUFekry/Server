@@ -139,7 +139,109 @@ public class DataAccessLayer {
     try {
         DriverManager.registerDriver(new ClientDriver());
         try (Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/XODATABASE", "root", "root");
+             PreparedStatement stmt = con.prepareStatement("select * from PLAYER where ONLINESTATUS = true and AVAILABILITYSTATUS = true")) {
+                //and isAvailable = true
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    DTOPlayerData player = new DTOPlayerData();
+                    player.setFullName(rs.getString("fullname"));
+                    player.setUserName(rs.getString("username"));
+                    player.setEmail(rs.getString("email"));
+                    player.setPassword(rs.getString("password"));
+                    player.setWinMatch(rs.getInt("win"));
+                    player.setLoseMAtch(rs.getInt("lose"));
+                    player.setTotalMatch(rs.getInt("totalmatches"));
+                    player.setIsOnline(rs.getBoolean("ONLINESTATUS"));
+                    player.setIsAvailable(rs.getBoolean("availabilitystatus"));
+                    player.setIsMale(rs.getBoolean("gender"));
+                    System.out.println("انا جوه الداتابيز");
+                    players.add(player);
+                }
+            }
+        }
+    } catch (SQLException ex) {
+        //handle sql exception
+        ex.printStackTrace();
+    }
+
+    return players;
+}
+        public static List<DTOPlayerData> onlineUsers() {
+    List<DTOPlayerData> players = new ArrayList<>();
+
+    try {
+        DriverManager.registerDriver(new ClientDriver());
+        try (Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/XODATABASE", "root", "root");
              PreparedStatement stmt = con.prepareStatement("select * from PLAYER where ONLINESTATUS = true")) {
+                //and isAvailable = true
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    DTOPlayerData player = new DTOPlayerData();
+                    player.setFullName(rs.getString("fullname"));
+                    player.setUserName(rs.getString("username"));
+                    player.setEmail(rs.getString("email"));
+                    player.setPassword(rs.getString("password"));
+                    player.setWinMatch(rs.getInt("win"));
+                    player.setLoseMAtch(rs.getInt("lose"));
+                    player.setTotalMatch(rs.getInt("totalmatches"));
+                    player.setIsOnline(rs.getBoolean("ONLINESTATUS"));
+                    player.setIsAvailable(rs.getBoolean("availabilitystatus"));
+                    player.setIsMale(rs.getBoolean("gender"));
+                    System.out.println("انا جوه الداتابيز");
+                    players.add(player);
+                }
+            }
+        }
+    } catch (SQLException ex) {
+        //handle sql exception
+        ex.printStackTrace();
+    }
+
+    return players;
+}
+            public static List<DTOPlayerData> offlineUsers() {
+    List<DTOPlayerData> players = new ArrayList<>();
+
+    try {
+        DriverManager.registerDriver(new ClientDriver());
+        try (Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/XODATABASE", "root", "root");
+             PreparedStatement stmt = con.prepareStatement("select * from PLAYER where ONLINESTATUS = false")) {
+                //and isAvailable = true
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    DTOPlayerData player = new DTOPlayerData();
+                    player.setFullName(rs.getString("fullname"));
+                    player.setUserName(rs.getString("username"));
+                    player.setEmail(rs.getString("email"));
+                    player.setPassword(rs.getString("password"));
+                    player.setWinMatch(rs.getInt("win"));
+                    player.setLoseMAtch(rs.getInt("lose"));
+                    player.setTotalMatch(rs.getInt("totalmatches"));
+                    player.setIsOnline(rs.getBoolean("ONLINESTATUS"));
+                    player.setIsAvailable(rs.getBoolean("availabilitystatus"));
+                    player.setIsMale(rs.getBoolean("gender"));
+                    System.out.println("انا جوه الداتابيز");
+                    players.add(player);
+                }
+            }
+        }
+    } catch (SQLException ex) {
+        //handle sql exception
+        ex.printStackTrace();
+    }
+
+    return players;
+}
+                        public static List<DTOPlayerData> inGameUsers() {
+    List<DTOPlayerData> players = new ArrayList<>();
+
+    try {
+        DriverManager.registerDriver(new ClientDriver());
+        try (Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/XODATABASE", "root", "root");
+             PreparedStatement stmt = con.prepareStatement("select * from PLAYER where ONLINESTATUS = true and AVAILABILITYSTATUS = false")) {
                 //and isAvailable = true
             
             try (ResultSet rs = stmt.executeQuery()) {
