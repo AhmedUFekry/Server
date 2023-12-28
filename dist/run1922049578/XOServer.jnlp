@@ -8,17 +8,10 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-<<<<<<< HEAD
-    <jar href="XOServer.jar" size="15769" download="eager" />
-    <jar href="lib\derby.jar" size="2766479" download="eager" />
-    <jar href="lib\derbyclient.jar" size="576624" download="eager" />
-    <jar href="lib\derbynet.jar" size="248898" download="eager" />
-=======
-    <jar href="XOServer.jar" size="17051" download="eager" />
+    <jar href="XOServer.jar" size="16473" download="eager" />
     <jar href="lib\derby.jar" size="3104883" download="eager" />
     <jar href="lib\derbyclient.jar" size="585704" download="eager" />
     <jar href="lib\derbynet.jar" size="266471" download="eager" />
->>>>>>> 0bfdebc093cd652dd9f14b802c91d4d8cc0d3218
     <jar href="lib\gson-2.2.4.jar" size="190418" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="XOServer" >

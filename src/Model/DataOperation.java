@@ -15,6 +15,10 @@ import java.util.List;
 public class DataOperation {
     private String operation;
     private List<DTOPlayerData> players;
+
+    public DataOperation(String profile) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -34,6 +38,10 @@ public class DataOperation {
     public DataOperation(String operation, List<DTOPlayerData> players) {
         this.operation = operation;
         this.players = players;
+    }
+
+    public void addPlayer(DTOPlayerData player) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     

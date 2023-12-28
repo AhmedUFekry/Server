@@ -10,9 +10,12 @@ import Model.DTO.DTOPlayerData;
 import Model.DataOperation;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -20,6 +23,8 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  *
@@ -86,12 +91,14 @@ public class ServerHandler {
 
 class ClientHandler extends Thread {
 
-    private Socket socket;
-    private DataInputStream dataInput;
-    private PrintStream dataOutput;
 
-    // private static Vector<ClientHandler> clientsVector ; 
-    public ClientHandler(Socket s) {
+     private  Socket socket;
+     private  DataInputStream dataInput ;
+     private PrintStream dataOutput;
+     private String clientName;
+     private ObservableList<DTOPlayerData> availablePlayer = FXCollections.observableArrayList(new DTOPlayerData("aya", "aya", "", "", 1, 0, 2, true, true, true),new DTOPlayerData("rwan2", "aya", "", "", 1, 0, 2, true, true, true)) ;
+  
+    public ClientHandler(Socket s) { 
         try {
             socket = s;
             dataInput = new DataInputStream(s.getInputStream());
@@ -120,6 +127,7 @@ class ClientHandler extends Thread {
                     dataOutput.println("client exit");
                     System.out.println("client exit");
                     removeClientFromVector(this);
+
                 }else if (msg.equals("availableUsers")) {
                     DTOPlayerData player = new DTOPlayerData("aya", "aya", "email", "1234", 0, 0, 0, true, true, true);
                     DTOPlayerData player2 = new DTOPlayerData("rwan2", "aya", "", "", 1, 0, 2, true, true, true);
@@ -133,7 +141,13 @@ class ClientHandler extends Thread {
                     System.out.println(json);
                     dataOutput.println(json);
 
-                }else {
+                }/*else if(msg.equalsIgnoreCase("accepted")){
+                    System.out.println("start the game");
+                    dataOutput.println("start the game");
+                }else if(msg.equalsIgnoreCase("rejected")){
+                    System.out.println("rejected the game");
+                    dataOutput.println("rejected the game");}*/
+                else{
                     handleClientOperation(msg);
                 } 
             }
@@ -152,8 +166,14 @@ class ClientHandler extends Thread {
                 System.out.println(dataReceived.getPlayers().get(0).getPassword());
                 System.out.println(responseToClient);
                 dataOutput.println(responseToClient);
+
                 /*  if(!"error".equalsIgnoreCase(responseToClient))
                     ServerHandler.onlineUser.add(this);*/
+              
+                if(!"error".equalsIgnoreCase(responseToClient)){
+                    System.out.println("add client name to the socket "+responseToClient);
+                    this.setClientName(responseToClient.trim());
+                }
             } else if (dataReceived.getOperation().equals("sign up")) {
                 // Handle signup operation
                 System.out.println(dataReceived.getPlayers());
@@ -162,9 +182,39 @@ class ClientHandler extends Thread {
                 /* if(!"error".equalsIgnoreCase(responseToClient))
                     ServerHandler.onlineUser.add(this);*/
             }// Add more operations here
-             else {
-                System.out.println("Received null data from client");
+             
+      else if (dataReceived.getOperation().equals("profile")) {
+            // Retrieve player data from the database using DataAccessLayer
+            // Populate the 'player' object with the retrieved data
+            System.out.println("Profile()");
+            DTOPlayerData player = DataAccessLayer.profileCheck(dataReceived.getPlayers().get(0).getUserName().trim());
+            System.out.println(player.getEmail());
+            if(player==null){
+                System.out.println("error");
+                dataOutput.println("error");
+            }else {
+                GsonBuilder builder = new GsonBuilder();
+                Gson gson = builder.create();
+                String jsonResponse = gson.toJson(player);
+                System.out.println("hii player"+jsonResponse);
+        // Send the JSON response to the client
+                dataOutput.println(jsonResponse);
             }
+        }else if(dataReceived.getOperation().equals("request")){
+           List<DTOPlayerData> requestPlayers = dataReceived.getPlayers();
+           //loop on the available list to get the player to send the request to him 
+           System.out.println("recieved data"+requestPlayers.get(0).getUserName());
+           System.out.println("recieved data"+requestPlayers.get(1).getUserName());
+           System.out.println("availablePlayer "+ServerHandler.clientsVector.size());
+           notifyOtherPlayer(requestPlayers.get(1).getUserName().trim(),"user invited");
+           System.out.println("wait for response from the player 2");
+           responseForInvitation(requestPlayers.get(0).getUserName(),requestPlayers.get(1).getUserName());
+           //dataOutput.println("recieved data");
+            System.out.println("request Done ");
+        }
+           // Add more operations here
+        }else{
+             System.out.println("Received null data from client");
         }
     }
 
@@ -202,11 +252,51 @@ class ClientHandler extends Thread {
     }
 
     private void addClientToVector(ClientHandler clientHandler) {
-
         ServerHandler.clientsVector.add(clientHandler);
-        System.out.println("Client removed from clientsVector");
-        System.out.println("addClientToVector() " + ServerHandler.clientsVector.size());
+        System.out.println("Client added to clientsVector");
+        System.out.println("addClientToVector() "+ ServerHandler.clientsVector.size());  
+    }
+    private synchronized void responseForInvitation(String playerWhoSendRequest , String playerResponseForRequest){
+         try {
+             String msg = dataInput.readLine();
+             if(msg.equalsIgnoreCase("start the game")){
+                 System.out.println("start the game for player1 "+playerWhoSendRequest+" and player2 "+playerResponseForRequest);
+                 notifyOtherPlayer(playerWhoSendRequest, "start the game");
+                // notifyOtherPlayer(playerResponseForRequest, "start the game");
+                 //dataOutput.println("start the game");
+                
+                 
+                 /// game session 
+                 
+             }else if(msg.equalsIgnoreCase("rejected")){
+                 System.out.println("rejected the game");
+                 System.out.println("rejected the game "+playerWhoSendRequest+" and player2 "+playerResponseForRequest);
+                 notifyOtherPlayer(playerWhoSendRequest, "rejected the game");
+                 //notifyOtherPlayer(playerResponseForRequest, "start the game");
+             }
+         } catch (IOException ex) {
+             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+         }
+    } 
+    private void notifyOtherPlayer(String playerWhoToNotify, String msgToSend){
+        for(ClientHandler client :ServerHandler.clientsVector){
+               System.out.println("get in loop to find the player to invite ");
+               if(client.getClientName().equals(playerWhoToNotify)){
+                   System.out.println("found player "+playerWhoToNotify);
+                   System.out.println("send msg the msg is "+msgToSend);
+                   client.dataOutput.println(msgToSend);
+                   break;
+               }
+           }
+    }
+    public void setClientName(String playerName){
+        this.clientName = playerName;
+    }
+    public String getClientName(){
+        return clientName;
 
     }
 
 }
+
+
