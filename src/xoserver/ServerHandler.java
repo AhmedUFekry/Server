@@ -130,6 +130,7 @@ class ClientHandler extends Thread {
                     System.out.println("rejected the game");
                     dataOutput.println("rejected the game");}*/
                 else{
+                    System.out.println("handleClientOperation "+msg);
                     handleClientOperation(msg);
                 }
             } 
