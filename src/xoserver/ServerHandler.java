@@ -130,19 +130,19 @@ class ClientHandler extends Thread {
                     //DTOPlayerData player = new DTOPlayerData("aya", "aya", "email", "1234", 0, 0, 0, true, true, true);
                     //DTOPlayerData player2 = new DTOPlayerData("rwan2", "aya", "", "", 1, 0, 2, true, true, true);
                     List<DTOPlayerData> responseToClient =  DataAccessLayer.availableList();          //new ArrayList<>();  /// transfre this to string  xxxxxxxxxxxxxxxxxxxxxxxxxxxx    حولها في json و ابعته
-                    List<DTOPlayerData> wellFormedResponseToClient = null ;
+                   /* List<DTOPlayerData> wellFormedResponseToClient = null ;
                     
                     for (DTOPlayerData dTOPlayerData : responseToClient) {
                         if (this.getName() != dTOPlayerData.getUserName()){
                             wellFormedResponseToClient.add(dTOPlayerData);
                         }   
-                    }
+                    }*/
                     //responseToClient.add(player);
                     //responseToClient.add(player2);
                     //System.out.println(responseToClient.get(2));
                     GsonBuilder builder = new GsonBuilder();
                     Gson gson = builder.create();
-                    String json = gson.toJson(wellFormedResponseToClient);
+                    String json = gson.toJson(responseToClient);
                     System.out.println(json);
                     dataOutput.println(json);
 
