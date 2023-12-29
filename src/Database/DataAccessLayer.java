@@ -60,8 +60,8 @@ public class DataAccessLayer {
             stmt.setString(2,player.getFullName());
             stmt.setString(3,player.getEmail());
             stmt.setString(4,player.getPassword());
-            stmt.setBoolean(5,player.isIsOnline());
-            stmt.setBoolean(6,player.isIsAvailable());
+            stmt.setBoolean(5,true);
+            stmt.setBoolean(6,true);
             stmt.setBoolean(7,player.isIsMale());
            
             result  =stmt.executeUpdate();
@@ -149,10 +149,10 @@ public class DataAccessLayer {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     DTOPlayerData player = new DTOPlayerData();
-                    player.setFullName(rs.getString("fullname"));
-                    player.setUserName(rs.getString("username"));
-                    player.setEmail(rs.getString("email"));
-                    player.setPassword(rs.getString("password"));
+                    player.setFullName(rs.getString("fullname").trim());
+                    player.setUserName(rs.getString("username").trim());
+                    player.setEmail(rs.getString("email").trim());
+                    player.setPassword(rs.getString("password").trim());
                     player.setWinMatch(rs.getInt("win"));
                     player.setLoseMAtch(rs.getInt("lose"));
                     player.setTotalMatch(rs.getInt("totalmatches"));
@@ -239,7 +239,7 @@ public class DataAccessLayer {
 
     return players;
 }
-                        public static List<DTOPlayerData> inGameUsers() {
+    public static List<DTOPlayerData> inGameUsers() {
     List<DTOPlayerData> players = new ArrayList<>();
 
     try {

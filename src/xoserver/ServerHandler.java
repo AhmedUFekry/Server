@@ -142,13 +142,14 @@ class ClientHandler extends Thread {
                     //System.out.println(responseToClient.get(2));
                     GsonBuilder builder = new GsonBuilder();
                     Gson gson = builder.create();
-                    String json = gson.toJson(wellFormedResponseToClient);
+                    String json = gson.toJson(responseToClient);
                     System.out.println(json);
                     dataOutput.println(json);
 
                 }else if(msg.equalsIgnoreCase("start the game")){
                     System.out.println("start the game");
-                    dataOutput.println("start the game");
+                    requestPlayers.iterator().next().dataOutput.println("start the game");
+                    
                 }else if(msg.equalsIgnoreCase("rejected the game")){
                     System.out.println("rejected the game");
                     dataOutput.println("rejected the game");
@@ -321,10 +322,10 @@ class ClientHandler extends Thread {
      private synchronized void notifyOtherPlayer(String playerWhoSendRequest , String requestedPlayerName){
         ClientHandler requestedPlayer = getClient(requestedPlayerName);
         if(requestedPlayer != null){
-            try {
+          //  try {
                 System.out.println("found player "+requestedPlayerName);
                 requestedPlayer.dataOutput.println("user invited");
-                String response =  this.dataInput.readLine();
+              /*  String response =  this.dataInput.readLine();
                 System.out.println("response is"+response);
                 if(response.equalsIgnoreCase("start the game")){
                     requestPlayers.add(requestedPlayer);
@@ -351,43 +352,8 @@ class ClientHandler extends Thread {
                     Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
                  }finally{
                     closeResources();
-                }
+                }*/
             }
-        
-        for(ClientHandler client :ServerHandler.clientsVector){
-               System.out.println("get in loop to find the player to invite ");
-               if(client.getClientName().equals(requestedPlayerName)){
-                   try {
-                       System.out.println("found player "+requestedPlayerName);
-                       System.out.println("send msg the msg is "+"user found");
-                       client.dataOutput.println("user invited");
-                      String response =  this.dataInput.readLine();
-                       System.out.println("response is"+response);
-                        if(response.equalsIgnoreCase("start the game")){
-                            System.out.println("start the game for player1 "+playerWhoSendRequest+" and player2 "+requestedPlayerName);
-                            //notifyOtherPlayer(playerWhoSendRequest, "start the game");
-                           notifyPlayerResponse(playerWhoSendRequest,"start the game");
-                            requestPlayers.add(client);
-                            
-                    /// game session
-                    System.out.println("response is "+response);
-                }else if(response.equalsIgnoreCase("rejected")){
-                    System.out.println("rejected the game");
-                    System.out.println("rejected the game "+playerWhoSendRequest+" and player2 "+requestedPlayerName);
-                    notifyOtherPlayer(playerWhoSendRequest, "rejected the game");
-                    //notifyOtherPlayer(playerResponseForRequest, "start the game");
-                    System.out.println("response is "+response);
-                }else {
-                    System.out.println("response is "+response);
-                }
-                       
-                   } catch (IOException ex) {
-                       Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
-                    }finally{
-                       closeResources();
-                   }
-               }
-           }
     }
     private synchronized void notifyPlayerResponse(String playerWhoToNotify, String msgToSend){
         for(ClientHandler client :ServerHandler.clientsVector){
