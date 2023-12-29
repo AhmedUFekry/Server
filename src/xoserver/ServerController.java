@@ -12,7 +12,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.util.Duration;
-
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;

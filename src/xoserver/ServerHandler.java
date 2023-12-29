@@ -36,6 +36,7 @@ public class ServerHandler {
     private volatile boolean isServerRunning = true;
     public static Vector<ClientHandler> clientsVector;
     public static Vector<ClientHandler> onlineUser;
+    DTOPlayerData currentPlayer;
 
     public ServerHandler() {
         try {
@@ -90,8 +91,6 @@ public class ServerHandler {
 }
 
 class ClientHandler extends Thread {
-
-
      private  Socket socket;
      private  DataInputStream dataInput ;
      private PrintStream dataOutput;
@@ -130,32 +129,14 @@ class ClientHandler extends Thread {
                     removeClientFromVector(this);
 
                 }else if (msg.equals("availableUsers")) {
-                    //DTOPlayerData player = new DTOPlayerData("aya", "aya", "email", "1234", 0, 0, 0, true, true, true);
-                    //DTOPlayerData player2 = new DTOPlayerData("rwan2", "aya", "", "", 1, 0, 2, true, true, true);
                     List<DTOPlayerData> responseToClient =  DataAccessLayer.availableList();          //new ArrayList<>();  /// transfre this to string  xxxxxxxxxxxxxxxxxxxxxxxxxxxx    حولها في json و ابعته
-                    List<DTOPlayerData> wellFormedResponseToClient = null ;
-                    
-                    for (DTOPlayerData dTOPlayerData : responseToClient) {
-                        if (this.getName() != dTOPlayerData.getUserName()){
-                            wellFormedResponseToClient.add(dTOPlayerData);
-                        }   
-                    }
-                    //responseToClient.add(player);
-                    //responseToClient.add(player2);
-                    //System.out.println(responseToClient.get(2));
                     GsonBuilder builder = new GsonBuilder();
                     Gson gson = builder.create();
-                    String json = gson.toJson(wellFormedResponseToClient);
+                    String json = gson.toJson(responseToClient);
                     System.out.println(json);
                     dataOutput.println(json);
 
-                }/*else if(msg.equalsIgnoreCase("accepted")){
-                    System.out.println("start the game");
-                    dataOutput.println("start the game");
-                }else if(msg.equalsIgnoreCase("rejected")){
-                    System.out.println("rejected the game");
-                    dataOutput.println("rejected the game");}*/
-                else{
+                }else{
                     System.out.println("handleClientOperation "+msg);
                     handleClientOperation(msg);
                 } 
@@ -172,6 +153,7 @@ class ClientHandler extends Thread {
         if (dataReceived != null) {
             if (dataReceived.getOperation().equals("login")) {
                 String responseToClient = DataAccessLayer.signInCheck(dataReceived.getPlayers().get(0).getUserName(), dataReceived.getPlayers().get(0).getPassword());
+                setClientName(dataReceived.getPlayers().get(0).getUserName());
                 System.out.println(dataReceived.getPlayers().get(0).getPassword());
                 System.out.println(responseToClient);
                 dataOutput.println(responseToClient);

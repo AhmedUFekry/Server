@@ -138,7 +138,7 @@ public class DataAccessLayer {
     try {
         DriverManager.registerDriver(new ClientDriver());
         try (Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/XODATABASE", "root", "root");
-             PreparedStatement stmt = con.prepareStatement("select * from PLAYER where ONLINESTATUS = true and AVAILABILITYSTATUS = true")) {
+             PreparedStatement stmt = con.prepareStatement("select * from PLAYER where ONLINESTATUS = true AND AVAILABILITYSTATUS = true")) {
                 //and isAvailable = true
             
             try (ResultSet rs = stmt.executeQuery()) {
@@ -166,7 +166,7 @@ public class DataAccessLayer {
 
     return players;
 }
-        public static List<DTOPlayerData> onlineUsers() {
+    public static List<DTOPlayerData> onlineUsers() {
     List<DTOPlayerData> players = new ArrayList<>();
 
     try {
@@ -200,7 +200,7 @@ public class DataAccessLayer {
 
     return players;
 }
-            public static List<DTOPlayerData> offlineUsers() {
+    public static List<DTOPlayerData> offlineUsers() {
     List<DTOPlayerData> players = new ArrayList<>();
 
     try {
@@ -234,7 +234,7 @@ public class DataAccessLayer {
 
     return players;
 }
-                        public static List<DTOPlayerData> inGameUsers() {
+    public static List<DTOPlayerData> inGameUsers() {
     List<DTOPlayerData> players = new ArrayList<>();
 
     try {
@@ -290,5 +290,28 @@ public class DataAccessLayer {
         con.close();
         return result;
     }
-
+     
+     public static int logOut(DTOPlayerData player) throws SQLException{
+       int result;
+         
+           //1- load & Register the driver
+            DriverManager.registerDriver(new ClientDriver()); //when error occour throw it and close
+            //2-connection
+            Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/XODATABASE", "root", "root"); //when error occour throw it and close
+            //3- Queries
+            PreparedStatement stmt = con.prepareStatement("update PLAYER  set AVAILABILITYSTATUS = false and ONLINESTATUS = false where username = ?");
+           stmt.setString(1, player.getUserName());
+            result = stmt.executeUpdate();
+        
+            if(result>0){
+                System.out.println("log out updated successfully.");
+            } else {
+                System.out.println("No rows updated. Username not found.");
+            }
+            stmt.close();
+            con.close();
+          
+       return result;
+     }
+     
 }
