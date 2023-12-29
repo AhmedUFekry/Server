@@ -34,6 +34,7 @@ public class ServerHandler {
     private volatile boolean isServerRunning = true;
     public static Vector<ClientHandler> clientsVector;
     public static Vector<ClientHandler> onlineUser;
+     public static ArrayList<ClientHandler> requestPlayers;
 
     public ServerHandler() {
         try {
@@ -41,6 +42,7 @@ public class ServerHandler {
             myServerSocket = new ServerSocket(5050);
             System.out.println("xoserver.ServerHandler.<init>()");
             clientsVector = new Vector<ClientHandler>();
+            requestPlayers = new ArrayList<ClientHandler>();
             Vector<ClientHandler> onlineUser = new Vector<ClientHandler>();
         } catch (IOException ex) {
             Logger.getLogger(ServerHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -92,7 +94,7 @@ class ClientHandler extends Thread {
      private  DataInputStream dataInput ;
      private PrintStream dataOutput;
      private String clientName;
-     private ArrayList<ClientHandler> requestPlayers; //get the current player name and the invited player name (currentPlayer, InvittedPlayer)
+     //get the current player name and the invited player name (currentPlayer, InvittedPlayer)
   
     public ClientHandler(Socket s) { 
         try {
@@ -130,13 +132,13 @@ class ClientHandler extends Thread {
                     //DTOPlayerData player = new DTOPlayerData("aya", "aya", "email", "1234", 0, 0, 0, true, true, true);
                     //DTOPlayerData player2 = new DTOPlayerData("rwan2", "aya", "", "", 1, 0, 2, true, true, true);
                     List<DTOPlayerData> responseToClient =  DataAccessLayer.availableList();          //new ArrayList<>();  /// transfre this to string  xxxxxxxxxxxxxxxxxxxxxxxxxxxx    حولها في json و ابعته
-                    List<DTOPlayerData> wellFormedResponseToClient = null ;
+                   /* List<DTOPlayerData> wellFormedResponseToClient = null ;
                     
                     for (DTOPlayerData dTOPlayerData : responseToClient) {
                         if (this.getName() != dTOPlayerData.getUserName()){
                             wellFormedResponseToClient.add(dTOPlayerData);
                         }   
-                    }
+                    }*/
                     //responseToClient.add(player);
                     //responseToClient.add(player2);
                     //System.out.println(responseToClient.get(2));
@@ -148,8 +150,11 @@ class ClientHandler extends Thread {
 
                 }else if(msg.equalsIgnoreCase("start the game")){
                     System.out.println("start the game");
-                    requestPlayers.iterator().next().dataOutput.println("start the game");
-                    
+                    System.out.println("suppose this is receiver"+this.getClientName());
+                    ServerHandler.requestPlayers.add(getClient(this.getClientName()));
+                    ServerHandler.requestPlayers.get(0).dataOutput.println("start the game");
+                   // requestPlayers.iterator().next().dataOutput.println("start the game");
+                    break;
                 }else if(msg.equalsIgnoreCase("rejected the game")){
                     System.out.println("rejected the game");
                     dataOutput.println("rejected the game");
@@ -218,10 +223,10 @@ class ClientHandler extends Thread {
                     List<DTOPlayerData> requestPlayerData = dataReceived.getPlayers(); //client 2 player 
             {
                 //loop on the available list to get the player to send the request to him
-                    requestPlayers = new ArrayList<>();
+                    
                     String currentPlayerName = requestPlayerData.get(0).getUserName();
                     if(currentPlayerName !=null ){
-                        requestPlayers.add(getClient(currentPlayerName));
+                        ServerHandler.requestPlayers.add(getClient(currentPlayerName));
                     }
                     System.out.println("recieved data current player is "+requestPlayerData.get(0).getUserName());
                     System.out.println("recieved data invited player is "+requestPlayerData.get(1).getUserName());
@@ -320,11 +325,14 @@ class ClientHandler extends Thread {
         return "error";
     }*/
      private synchronized void notifyOtherPlayer(String playerWhoSendRequest , String requestedPlayerName){
-        ClientHandler requestedPlayer = getClient(requestedPlayerName);
-        if(requestedPlayer != null){
+        ClientHandler reciever = getClient(requestedPlayerName);
+        ClientHandler sender = getClient(playerWhoSendRequest);
+        if(reciever != null){
           //  try {
+         ServerHandler.requestPlayers.add(sender);
+      
                 System.out.println("found player "+requestedPlayerName);
-                requestedPlayer.dataOutput.println("user invited");
+                reciever.dataOutput.println("user invited");
               /*  String response =  this.dataInput.readLine();
                 System.out.println("response is"+response);
                 if(response.equalsIgnoreCase("start the game")){
@@ -355,17 +363,7 @@ class ClientHandler extends Thread {
                 }*/
             }
     }
-    private synchronized void notifyPlayerResponse(String playerWhoToNotify, String msgToSend){
-        for(ClientHandler client :ServerHandler.clientsVector){
-               System.out.println("get in loop to find the player to invite ");
-               if(client.getClientName().equals(playerWhoToNotify)){
-                       System.out.println("found player "+playerWhoToNotify);
-                       System.out.println("send msg the msg is "+msgToSend);
-                       client.dataOutput.println(msgToSend);
-                       requestPlayers.add(client);
-               }
-           }
-    }
+   
      
     public void setClientName(String playerName){
         this.clientName = playerName;

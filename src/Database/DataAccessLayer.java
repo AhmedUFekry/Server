@@ -46,9 +46,7 @@ public class DataAccessLayer {
             handleDatabaseError(ex);
         }
         return "error";
-    }
-    
-   
+    } 
     public static String signUpCheck(DTOPlayerData player) {
       // DTOPlayerData player = new DTOPlayerData();
             int result;
@@ -159,7 +157,7 @@ public class DataAccessLayer {
                     player.setIsOnline(rs.getBoolean("ONLINESTATUS"));
                     player.setIsAvailable(rs.getBoolean("availabilitystatus"));
                     player.setIsMale(rs.getBoolean("gender"));
-                    System.out.println("انا جوه الداتابيز");
+                  //  System.out.println("انا جوه الداتابيز");
                     players.add(player);
                 }
             }
@@ -193,7 +191,7 @@ public class DataAccessLayer {
                     player.setIsOnline(rs.getBoolean("ONLINESTATUS"));
                     player.setIsAvailable(rs.getBoolean("availabilitystatus"));
                     player.setIsMale(rs.getBoolean("gender"));
-                    System.out.println("انا جوه الداتابيز");
+                   // System.out.println("انا جوه الداتابيز");
                     players.add(player);
                 }
             }
@@ -227,7 +225,7 @@ public class DataAccessLayer {
                     player.setIsOnline(rs.getBoolean("ONLINESTATUS"));
                     player.setIsAvailable(rs.getBoolean("availabilitystatus"));
                     player.setIsMale(rs.getBoolean("gender"));
-                    System.out.println("انا جوه الداتابيز");
+                  //  System.out.println("انا جوه الداتابيز");
                     players.add(player);
                 }
             }
@@ -261,7 +259,7 @@ public class DataAccessLayer {
                     player.setIsOnline(rs.getBoolean("ONLINESTATUS"));
                     player.setIsAvailable(rs.getBoolean("availabilitystatus"));
                     player.setIsMale(rs.getBoolean("gender"));
-                    System.out.println("انا جوه الداتابيز");
+                   // System.out.println("انا جوه الداتابيز");
                     players.add(player);
                 }
             }
