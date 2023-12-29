@@ -159,7 +159,13 @@ class ClientHandler extends Thread {
                     System.out.println("rejected the game");
                     dataOutput.println("rejected the game");
                     break;
-                } else{
+                } else if (msg.length()== 6){
+                    System.out.println("recieve play"+msg);
+                    
+                      forwardToOtherPlayer(this,msg);
+                
+                }else{
+                    
                     System.out.println("handleClientOperation "+msg);
                     handleClientOperation(msg);
                 } 
@@ -171,7 +177,7 @@ class ClientHandler extends Thread {
             closeResources();
         }
     }
-
+        
     private void handleClientOperation(String msg) {
         DataOperation dataReceived = new Gson().fromJson(msg, DataOperation.class);
         if (dataReceived != null) {
@@ -282,48 +288,6 @@ class ClientHandler extends Thread {
         System.out.println("Client added to clientsVector");
         System.out.println("addClientToVector() "+ ServerHandler.clientsVector.size());  
     }
-   
-   /* private synchronized void responseForInvitation(String response,String playerWhoSendRequest , String playerResponseForRequest){
-        //String response = dataInput.readLine();
-        if(response.equalsIgnoreCase("start the game")){
-            System.out.println("start the game for player1 "+playerWhoSendRequest+" and player2 "+playerResponseForRequest);
-            notifyOtherPlayer(playerWhoSendRequest, "start the game");
-           // notifyOtherPlayer(playerResponseForRequest, "start the game");
-            //dataOutput.println("start the game");
-            /// game session
-            System.out.println("response is "+response);
-        }else if(response.equalsIgnoreCase("rejected")){
-            System.out.println("rejected the game");
-            System.out.println("rejected the game "+playerWhoSendRequest+" and player2 "+playerResponseForRequest);
-            notifyOtherPlayer(playerWhoSendRequest, "rejected the game");
-            //notifyOtherPlayer(playerResponseForRequest, "start the game");
-            System.out.println("response is "+response);
-        }else {
-            System.out.println("response is "+response);
-        }
-        //
-        //closeResources();
-    } 
-    
-    private synchronized String notifyOtherPlayer(String playerWhoToNotify, String msgToSend){
-        for(ClientHandler client :ServerHandler.clientsVector){
-               System.out.println("get in loop to find the player to invite ");
-               if(client.getClientName().equals(playerWhoToNotify)){
-                   try {
-                       System.out.println("found player "+playerWhoToNotify);
-                       System.out.println("send msg the msg is "+msgToSend);
-                       client.dataOutput.println(msgToSend);
-                      return this.dataInput.readLine();
-                       
-                   } catch (IOException ex) {
-                       Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
-                    }finally{
-                       closeResources();
-                   }
-               }
-           }
-        return "error";
-    }*/
      private synchronized void notifyOtherPlayer(String playerWhoSendRequest , String requestedPlayerName){
         ClientHandler reciever = getClient(requestedPlayerName);
         ClientHandler sender = getClient(playerWhoSendRequest);
@@ -333,35 +297,7 @@ class ClientHandler extends Thread {
       
                 System.out.println("found player "+requestedPlayerName);
                 reciever.dataOutput.println("user invited");
-              /*  String response =  this.dataInput.readLine();
-                System.out.println("response is"+response);
-                if(response.equalsIgnoreCase("start the game")){
-                    requestPlayers.add(requestedPlayer);
-                    System.out.println("Game List players "+requestPlayers.size());
-                    System.out.println("start the game for player1 "+playerWhoSendRequest+" and player2 "+requestedPlayerName);
-                     //notifyOtherPlayer(playerWhoSendRequest, "start the game");
-                    //notifyPlayerResponse(playerWhoSendRequest,"start the game");
-                     requestPlayers.get(0).dataOutput.println("start the game");
-
-                 /// game session
-                 System.out.println("response is "+response);
-             }else if(response.equalsIgnoreCase("rejected")){
-                 System.out.println("rejected the game");
-                 System.out.println("rejected the game "+playerWhoSendRequest+" and player2 "+requestedPlayerName);
-                 //notifyOtherPlayer(playerWhoSendRequest, "rejected the game");
-                 //notifyOtherPlayer(playerResponseForRequest, "start the game");
-                 requestPlayers.get(0).dataOutput.println("start the game");
-                 System.out.println("response is "+response);
-             }else {
-                 System.out.println("response is "+response);
-             }
-
-                } catch (IOException ex) {
-                    Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
-                 }finally{
-                    closeResources();
-                }*/
-            }
+        }
     }
    
      
@@ -381,6 +317,20 @@ class ClientHandler extends Thread {
             }
         }
         return null;
+    }
+
+    private void forwardToOtherPlayer(ClientHandler sender, String msg) {
+        ServerHandler.requestPlayers.forEach(client ->{
+         if(client != sender){
+             System.out.println("send to"+client.getClientName());
+              client.dataOutput.println(msg);
+              System.out.println("msg is "+ msg);
+              System.out.println("send to"+client.getClientName());
+         }
+        
+        });
+        
+      
     }
 
 }
