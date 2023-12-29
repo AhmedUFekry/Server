@@ -105,6 +105,7 @@ class ClientHandler extends Thread {
             // ClientHandler.clientsVector.add(this);
             // System.out.println("clientsVector "+ clientsVector.size());
             start();
+            
         } catch (IOException ex) {
             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -126,15 +127,22 @@ class ClientHandler extends Thread {
                     removeClientFromVector(this);
 
                 }else if (msg.equals("availableUsers")) {
-                    DTOPlayerData player = new DTOPlayerData("aya", "aya", "email", "1234", 0, 0, 0, true, true, true);
-                    DTOPlayerData player2 = new DTOPlayerData("rwan2", "aya", "", "", 1, 0, 2, true, true, true);
+                    //DTOPlayerData player = new DTOPlayerData("aya", "aya", "email", "1234", 0, 0, 0, true, true, true);
+                    //DTOPlayerData player2 = new DTOPlayerData("rwan2", "aya", "", "", 1, 0, 2, true, true, true);
                     List<DTOPlayerData> responseToClient =  DataAccessLayer.availableList();          //new ArrayList<>();  /// transfre this to string  xxxxxxxxxxxxxxxxxxxxxxxxxxxx    حولها في json و ابعته
+                    List<DTOPlayerData> wellFormedResponseToClient = null ;
+                    
+                    for (DTOPlayerData dTOPlayerData : responseToClient) {
+                        if (this.getName() != dTOPlayerData.getUserName()){
+                            wellFormedResponseToClient.add(dTOPlayerData);
+                        }   
+                    }
                     //responseToClient.add(player);
                     //responseToClient.add(player2);
                     //System.out.println(responseToClient.get(2));
                     GsonBuilder builder = new GsonBuilder();
                     Gson gson = builder.create();
-                    String json = gson.toJson(responseToClient);
+                    String json = gson.toJson(wellFormedResponseToClient);
                     System.out.println(json);
                     dataOutput.println(json);
 
