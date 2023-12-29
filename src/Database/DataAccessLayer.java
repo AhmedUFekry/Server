@@ -11,10 +11,13 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import org.apache.derby.jdbc.ClientDriver;
 /**
  *
@@ -40,7 +43,8 @@ public class DataAccessLayer {
             con.close();
         } catch (SQLException ex) {
             Logger.getLogger(DataAccessLayer.class.getName()).log(Level.SEVERE, null, ex);
-        }  
+            handleDatabaseError(ex);
+        }
         return "error";
     }
     
@@ -70,6 +74,7 @@ public class DataAccessLayer {
             }
         } catch (SQLException ex) {
             Logger.getLogger(DataAccessLayer.class.getName()).log(Level.SEVERE, null, ex);
+            handleDatabaseError(ex);
         }
         return "error";
     }
@@ -103,6 +108,7 @@ public class DataAccessLayer {
             con.close();
         } catch (SQLException ex) {
             Logger.getLogger(DataAccessLayer.class.getName()).log(Level.SEVERE, null, ex);
+            handleDatabaseError(ex);
         }
             
        System.out.println("Dreturn null");
@@ -130,7 +136,6 @@ public class DataAccessLayer {
         con.close();
         return result;
     }
-
     
     public static List<DTOPlayerData> availableList() {
     List<DTOPlayerData> players = new ArrayList<>();
@@ -144,10 +149,10 @@ public class DataAccessLayer {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     DTOPlayerData player = new DTOPlayerData();
-                    player.setFullName(rs.getString("fullname"));
-                    player.setUserName(rs.getString("username"));
-                    player.setEmail(rs.getString("email"));
-                    player.setPassword(rs.getString("password"));
+                    player.setFullName(rs.getString("fullname").trim());
+                    player.setUserName(rs.getString("username").trim());
+                    player.setEmail(rs.getString("email").trim());
+                    player.setPassword(rs.getString("password").trim());
                     player.setWinMatch(rs.getInt("win"));
                     player.setLoseMAtch(rs.getInt("lose"));
                     player.setTotalMatch(rs.getInt("totalmatches"));
@@ -188,5 +193,19 @@ public class DataAccessLayer {
         con.close();
         return result;
     }
+      private static void handleDatabaseError(SQLException ex) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Database Error");
+            alert.setHeaderText("An error occurred while accessing the database.");
 
+            if (ex instanceof SQLNonTransientConnectionException) {
+                alert.setContentText("Could not connect to the database. Please check your network connection and try again.");
+            } else {
+                alert.setContentText("An unexpected database error occurred. Please contact support.");
+            }
+
+            alert.show();
+        });
+    }
 }
