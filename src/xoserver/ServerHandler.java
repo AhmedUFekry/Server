@@ -34,6 +34,7 @@ public class ServerHandler {
     private volatile boolean isServerRunning = true;
     public static Vector<ClientHandler> clientsVector;
     public static Vector<ClientHandler> onlineUser;
+    DTOPlayerData currentPlayer;
 
     public ServerHandler() {
         try {
@@ -127,8 +128,6 @@ class ClientHandler extends Thread {
                     removeClientFromVector(this);
 
                 }else if (msg.equals("availableUsers")) {
-                    //DTOPlayerData player = new DTOPlayerData("aya", "aya", "email", "1234", 0, 0, 0, true, true, true);
-                    //DTOPlayerData player2 = new DTOPlayerData("rwan2", "aya", "", "", 1, 0, 2, true, true, true);
                     List<DTOPlayerData> responseToClient =  DataAccessLayer.availableList();          //new ArrayList<>();  /// transfre this to string  xxxxxxxxxxxxxxxxxxxxxxxxxxxx    حولها في json و ابعته
                    /* List<DTOPlayerData> wellFormedResponseToClient = null ;
                     
@@ -140,6 +139,7 @@ class ClientHandler extends Thread {
                     //responseToClient.add(player);
                     //responseToClient.add(player2);
                     //System.out.println(responseToClient.get(2));
+
                     GsonBuilder builder = new GsonBuilder();
                     Gson gson = builder.create();
                     String json = gson.toJson(responseToClient);
@@ -153,7 +153,7 @@ class ClientHandler extends Thread {
                     System.out.println("rejected the game");
                     dataOutput.println("rejected the game");
                     break;
-                } else{
+               }else{
                     System.out.println("handleClientOperation "+msg);
                     handleClientOperation(msg);
                 } 
@@ -230,11 +230,14 @@ class ClientHandler extends Thread {
                     System.out.println("request Done ");
             }
                     break;
+                case "logout":
+                    String response = DataAccessLayer.logOut(dataReceived.getPlayers().get(0));
+                    dataOutput.println(response);
+                    removeClientFromVector(this);
+                    break;
                 default:
                     break;
             }
-        }else{
-             System.out.println("Received null data from client");
         }
     }
 
@@ -276,48 +279,6 @@ class ClientHandler extends Thread {
         System.out.println("Client added to clientsVector");
         System.out.println("addClientToVector() "+ ServerHandler.clientsVector.size());  
     }
-   
-   /* private synchronized void responseForInvitation(String response,String playerWhoSendRequest , String playerResponseForRequest){
-        //String response = dataInput.readLine();
-        if(response.equalsIgnoreCase("start the game")){
-            System.out.println("start the game for player1 "+playerWhoSendRequest+" and player2 "+playerResponseForRequest);
-            notifyOtherPlayer(playerWhoSendRequest, "start the game");
-           // notifyOtherPlayer(playerResponseForRequest, "start the game");
-            //dataOutput.println("start the game");
-            /// game session
-            System.out.println("response is "+response);
-        }else if(response.equalsIgnoreCase("rejected")){
-            System.out.println("rejected the game");
-            System.out.println("rejected the game "+playerWhoSendRequest+" and player2 "+playerResponseForRequest);
-            notifyOtherPlayer(playerWhoSendRequest, "rejected the game");
-            //notifyOtherPlayer(playerResponseForRequest, "start the game");
-            System.out.println("response is "+response);
-        }else {
-            System.out.println("response is "+response);
-        }
-        //
-        //closeResources();
-    } 
-    
-    private synchronized String notifyOtherPlayer(String playerWhoToNotify, String msgToSend){
-        for(ClientHandler client :ServerHandler.clientsVector){
-               System.out.println("get in loop to find the player to invite ");
-               if(client.getClientName().equals(playerWhoToNotify)){
-                   try {
-                       System.out.println("found player "+playerWhoToNotify);
-                       System.out.println("send msg the msg is "+msgToSend);
-                       client.dataOutput.println(msgToSend);
-                      return this.dataInput.readLine();
-                       
-                   } catch (IOException ex) {
-                       Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
-                    }finally{
-                       closeResources();
-                   }
-               }
-           }
-        return "error";
-    }*/
      private synchronized void notifyOtherPlayer(String playerWhoSendRequest , String requestedPlayerName){
         ClientHandler requestedPlayer = getClient(requestedPlayerName);
         if(requestedPlayer != null){

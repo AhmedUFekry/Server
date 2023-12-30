@@ -11,6 +11,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +73,8 @@ public class DataAccessLayer {
             {
                 return player.getUserName().trim();
             }
+        }catch(SQLIntegrityConstraintViolationException e){
+            
         } catch (SQLException ex) {
             Logger.getLogger(DataAccessLayer.class.getName()).log(Level.SEVERE, null, ex);
             handleDatabaseError(ex);
@@ -143,7 +146,7 @@ public class DataAccessLayer {
     try {
         DriverManager.registerDriver(new ClientDriver());
         try (Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/XODATABASE", "root", "root");
-             PreparedStatement stmt = con.prepareStatement("select * from PLAYER where ONLINESTATUS = true and AVAILABILITYSTATUS = true")) {
+             PreparedStatement stmt = con.prepareStatement("select * from PLAYER where ONLINESTATUS = true AND AVAILABILITYSTATUS = true")) {
                 //and isAvailable = true
             
             try (ResultSet rs = stmt.executeQuery()) {
@@ -171,7 +174,7 @@ public class DataAccessLayer {
 
     return players;
 }
-        public static List<DTOPlayerData> onlineUsers() {
+    public static List<DTOPlayerData> onlineUsers() {
     List<DTOPlayerData> players = new ArrayList<>();
 
     try {
@@ -201,11 +204,14 @@ public class DataAccessLayer {
     } catch (SQLException ex) {
         //handle sql exception
         ex.printStackTrace();
+        handleDatabaseError(ex);
     }
 
     return players;
 }
+
    public static List<DTOPlayerData> offlineUsers() {
+
     List<DTOPlayerData> players = new ArrayList<>();
 
     try {
@@ -235,11 +241,14 @@ public class DataAccessLayer {
     } catch (SQLException ex) {
         //handle sql exception
         ex.printStackTrace();
+        handleDatabaseError(ex);
     }
 
     return players;
 }
+
   public static List<DTOPlayerData> inGameUsers() {
+
     List<DTOPlayerData> players = new ArrayList<>();
 
     try {
@@ -269,6 +278,7 @@ public class DataAccessLayer {
     } catch (SQLException ex) {
         //handle sql exception
         ex.printStackTrace();
+        handleDatabaseError(ex);
     }
 
     return players;
@@ -303,6 +313,8 @@ public class DataAccessLayer {
 
             if (ex instanceof SQLNonTransientConnectionException) {
                 alert.setContentText("Could not connect to the database. Please check your network connection and try again.");
+            }else if(ex instanceof SQLIntegrityConstraintViolationException){
+                alert.setContentText(ex.getMessage());
             } else {
                 alert.setContentText("An unexpected database error occurred. Please contact support.");
             }
@@ -310,4 +322,33 @@ public class DataAccessLayer {
             alert.show();
         });
     }
+     
+     public static String logOut(DTOPlayerData player){
+       try {
+           int result;
+           
+           //1- load & Register the driver
+           DriverManager.registerDriver(new ClientDriver()); //when error occour throw it and close
+           //2-connection
+           Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/XODATABASE", "root", "root"); //when error occour throw it and close
+           //3- Queries
+           PreparedStatement stmt = con.prepareStatement("update PLAYER set AVAILABILITYSTATUS = false , ONLINESTATUS = false where username = ?");
+           stmt.setString(1, player.getUserName().trim());
+           result = stmt.executeUpdate();
+           
+           stmt.close();
+           con.close();
+           if(result>0){
+               System.out.println("log out updated successfully.");
+               return "logout";
+           } else {
+               System.out.println("No rows updated. Username not found.");
+               
+           }
+       } catch (SQLException ex) {
+           Logger.getLogger(DataAccessLayer.class.getName()).log(Level.SEVERE, null, ex);
+           handleDatabaseError(ex);
+       }
+       return "error";
+    }    
 }
